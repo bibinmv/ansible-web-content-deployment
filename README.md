@@ -37,7 +37,7 @@ ansible-playbook webcontent.yml
 ```
 ```bash
 Verification
-curl http://<node>/webdev/
+curl http://servera/webdev/
 
 Expected output:
 Development

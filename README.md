@@ -23,22 +23,23 @@ This project automates the deployment of a web server and web content using Ansi
 
 ## ⚙️ Setup Instructions
 
-1. Install Ansible on control node
+1. Install Ansible on the control node
 2. Configure SSH access to managed nodes
-3. Update inventory file with target hosts
+3. Update the inventory file with target hosts
 
 ## ▶️ Run Playbook
 
 ```bash
-ansible-playbook -i inventory webcontent.yml
----
+Syntax Check:
+ansible-playbook --syntax-check webcontent.yml
+Run playbook:
+ansible-playbook webcontent.yml
+```
+```bash
 Verification
-
 curl http://<node>/webdev/
 
-
 Expected output:
-
 Development
-
+```
 

@@ -1,0 +1,65 @@
+---
+- name: Create a webserver in dev
+  hosts: dev
+  become: yes
+  tasks:
+    - name: Install httpd and firewall
+      ansible.builtin.yum:
+        name:
+          - httpd
+          - firewalld  
+        state: present
+
+    - name: Start and enable service 
+      ansible.builtin.service:
+        name: "{{item}}"
+        state: started
+        enabled: yes
+      loop:
+        - httpd
+        - firewalld
+
+    - name: Allow http in firewall rule
+      ansible.posix.firewalld:
+        service: http
+        state: enabled
+        permanent: true
+        immediate: true
+
+    - name: create a  group
+      ansible.builtin.group:
+        name: webdev
+        state: present
+
+    - name: Create a directory
+      ansible.builtin.file:
+        path: /webdev
+        group: webdev
+        state: dirctory
+        mode: '2775'
+
+    - name: Create a symbolic link
+      ansible.builtin.file:
+        src: /webdev
+        dest: /var/www/html/webdev
+        state: link
+
+    - name: add content
+      ansible.builtin.copy:
+        content: 'Development'
+        dest: /webdev/index.html
+        setype: httpd_sys_content_t
+      notify: restart httpd
+
+    - name: permanent sefcontext
+      community.general.sefcontext:
+        target: /webdev/index.html
+        setype: httpd_sys_content_t
+        state: present
+
+  handlers:
+    - name: restart httpd
+      ansible.builtin.service:
+        name: httpd
+        state: restarted     
+   
